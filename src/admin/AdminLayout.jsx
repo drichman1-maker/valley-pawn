@@ -27,7 +27,7 @@ export function RequireOwner({ children }) {
   return children;
 }
 
-const tab = ({ isActive }) => `whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${isActive ? 'bg-gold text-ink' : 'text-paper/80 hover:bg-paper/10 hover:text-paper'}`;
+const tab = ({ isActive }) => `whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${isActive ? 'bg-accent text-accent-ink' : 'text-fg-soft hover:bg-surface-2 hover:text-fg'}`;
 
 export function AdminLayout() {
   const backend = useBackend();
@@ -35,19 +35,19 @@ export function AdminLayout() {
   return (
     <div className="min-h-screen bg-paper-deep/50">
       <ModeBanners />
-      <header className="texture-dark text-paper">
+      <header className="glow border-b border-line text-fg">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
-            <LogoMark className="h-10 w-10 rounded-[14px] ring-1 ring-paper/15" />
+            <LogoMark className="h-10 w-10" />
             <div>
-              <p className="font-serif text-lg leading-tight">Owner portal</p>
-              <p className="text-xs text-paper/70">{shopName()}</p>
+              <p className="font-display text-lg font-bold leading-tight tracking-tight">Owner portal</p>
+              <p className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-muted">{shopName()}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <span className="hidden text-paper/75 sm:inline">{auth.session?.user?.email}</span>
-            <Link to="/" className="underline decoration-paper/40 underline-offset-4 hover:decoration-paper">View storefront</Link>
-            <button type="button" onClick={() => backend.signOut()} className="btn btn-ghost-light px-3.5 py-1.5 text-sm">Sign out</button>
+            <span className="hidden text-muted sm:inline">{auth.session?.user?.email}</span>
+            <Link to="/" className="text-fg-soft underline decoration-line-strong underline-offset-4 hover:text-accent">View storefront</Link>
+            <button type="button" onClick={() => backend.signOut()} className="btn btn-outline px-3.5 py-1.5 text-sm">Sign out</button>
           </div>
         </div>
         <nav aria-label="Owner" className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 pb-3 scrollbar-none">

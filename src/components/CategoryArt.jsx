@@ -1,5 +1,5 @@
 // Category artwork used wherever an item has no photo yet. Line icons (Lucide, ISC license)
-// on a tinted tile, so a catalog without photos still reads as intentional.
+// on a deep tinted tile, so a catalog without photos still reads as intentional.
 
 const ICONS = {
   tools: (
@@ -69,17 +69,19 @@ const ICONS = {
   ),
 };
 
+/* [tint-from, tint-to, light ink] per category. Deep hues so the paper tag and the lime item
+   number both sit on top with room to spare. */
 const THEMES = {
-  tools: ['#f5ecd9', '#e9d8b4', '#7a5418'],
-  jewelry: ['#f7ebe6', '#eacfc4', '#8a4b3a'],
-  electronics: ['#e9eef3', '#d0dae4', '#3b5268'],
-  music: ['#e8f0ea', '#cfe0d3', '#2f6b45'],
-  camera: ['#eeeaf3', '#d9d1e5', '#55457a'],
-  watch: ['#f1ece4', '#e0d6c6', '#5b4a32'],
-  games: ['#e6eff1', '#cde0e4', '#2c6470'],
-  sport: ['#eff1e3', '#dde1c6', '#5c6627'],
-  coins: ['#f4eddb', '#e6d8b8', '#7a5f18'],
-  tag: ['#f1ede6', '#e2dbcf', '#5d645f'],
+  tools: ['#2f2712', '#15120a', '#eac86a'],
+  jewelry: ['#331a21', '#170c0f', '#f3a8bb'],
+  electronics: ['#162536', '#0b131b', '#8ec4f2'],
+  music: ['#152b1d', '#0a170f', '#8ee6ab'],
+  camera: ['#271d38', '#120d1c', '#c6abf3'],
+  watch: ['#2e2518', '#17120b', '#dec79c'],
+  games: ['#122d32', '#091719', '#7fe1ee'],
+  sport: ['#282f13', '#14180a', '#d3e67c'],
+  coins: ['#322a10', '#171408', '#f3d46b'],
+  tag: ['#22251f', '#111310', '#b9bfb6'],
 };
 
 const MATCHERS = [
@@ -95,6 +97,7 @@ const MATCHERS = [
 ];
 
 export const artKey = (category = '') => MATCHERS.find(([re]) => re.test(category))?.[1] ?? 'tag';
+export const artInk = (category) => THEMES[artKey(category)][2];
 
 export function CategoryIcon({ category, className = '', strokeWidth = 1.5 }) {
   return (
@@ -104,7 +107,7 @@ export function CategoryIcon({ category, className = '', strokeWidth = 1.5 }) {
   );
 }
 
-/** Full-bleed tile: tinted gradient, soft halo, centered icon. */
+/** Full-bleed tile: deep tinted gradient, soft halo, centered icon. */
 export function CategoryArt({ category, label, size = 'md', className = '' }) {
   const [from, to, ink] = THEMES[artKey(category)];
   const icon = size === 'lg' ? 'h-24 w-24 sm:h-28 sm:w-28' : 'h-12 w-12 sm:h-14 sm:w-14';
@@ -116,10 +119,10 @@ export function CategoryArt({ category, label, size = 'md', className = '' }) {
       role="img"
       aria-label={label}
     >
-      <CategoryIcon category={category} className="pointer-events-none absolute -bottom-6 -right-6 h-40 w-40 opacity-[0.07]" strokeWidth={1} />
-      <span className={`absolute rounded-full bg-white/45 ${halo}`} aria-hidden="true" />
+      <CategoryIcon category={category} className="pointer-events-none absolute -bottom-6 -right-6 h-40 w-40 opacity-[0.08]" strokeWidth={1} />
+      <span className={`absolute rounded-full bg-white/[0.04] ${halo}`} aria-hidden="true" />
       <CategoryIcon category={category} className={`relative ${icon}`} strokeWidth={size === 'lg' ? 1.1 : 1.35} />
-      {size === 'lg' && <span className="relative mt-4 text-sm font-medium opacity-80">Photo coming soon</span>}
+      {size === 'lg' && <span className="relative mt-4 font-mono text-xs uppercase tracking-wider opacity-80">Photo coming soon</span>}
     </div>
   );
 }
@@ -143,9 +146,13 @@ function tagText(item) {
   return [words.slice(0, n).join(' ').replace(/[,(]$/, ''), words.slice(n).join(' ')];
 }
 
+const TAG_PAPER = '#f6f4ec';
+const TAG_INK = '#121412';
+const TAG_SOFT = '#4a504c';
+
 /**
- * Artwork for an item with no photo yet: a hanging shelf tag lettered with the item's brand and
- * model on the category's tint. Unique per item, so a grid never repeats one picture.
+ * Artwork for an item with no photo yet: a paper shelf tag lettered with the item's brand and
+ * model, hung on the category's deep tint. Unique per item, so a grid never repeats one picture.
  */
 export function ItemArt({ item, label, brandName, size = 'md', className = '' }) {
   const [from, to, ink] = THEMES[artKey(item.category)];
@@ -158,32 +165,32 @@ export function ItemArt({ item, label, brandName, size = 'md', className = '' })
       role="img"
       aria-label={label}
     >
-      <CategoryIcon category={item.category} className="pointer-events-none absolute -bottom-[8%] -right-[6%] h-[62%] w-auto opacity-[0.08]" strokeWidth={1} />
+      <CategoryIcon category={item.category} className="pointer-events-none absolute -bottom-[8%] -right-[6%] h-[62%] w-auto opacity-[0.1]" strokeWidth={1} />
       <svg aria-hidden="true" className="absolute left-0 top-0 h-full w-full" viewBox="0 0 100 75" preserveAspectRatio="none">
-        <path d="M 36 -2 C 31 12, 23 26, 19.4 37.5" fill="none" stroke={ink} strokeOpacity="0.4" vectorEffect="non-scaling-stroke" style={{ strokeWidth: 1.25 }} />
+        <path d="M 36 -2 C 31 12, 23 26, 19.4 37.5" fill="none" stroke={ink} strokeOpacity="0.5" vectorEffect="non-scaling-stroke" style={{ strokeWidth: 1.25 }} />
       </svg>
-      <div className="relative w-[70%]" style={{ transform: `rotate(${tilt}deg)`, transformOrigin: '6% 50%', filter: 'drop-shadow(0 6px 10px rgb(23 32 28 / 0.16)) drop-shadow(0 1px 1px rgb(23 32 28 / 0.12))' }}>
+      <div className="relative w-[70%]" style={{ transform: `rotate(${tilt}deg)`, transformOrigin: '6% 50%', filter: 'drop-shadow(0 10px 18px rgb(0 0 0 / 0.5)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.4))' }}>
         <div
-          className="relative flex flex-col justify-center bg-[#fffdf7] py-[6cqw] pl-[11cqw] pr-[5cqw]"
-          style={{ clipPath: 'polygon(9cqw 0, 100% 0, 100% 100%, 9cqw 100%, 0 50%)', borderRadius: '0 1.6cqw 1.6cqw 0' }}
+          className="relative flex flex-col justify-center py-[6cqw] pl-[11cqw] pr-[5cqw]"
+          style={{ background: TAG_PAPER, clipPath: 'polygon(9cqw 0, 100% 0, 100% 100%, 9cqw 100%, 0 50%)', borderRadius: '0 1.6cqw 1.6cqw 0' }}
         >
-          <span className="absolute left-[3.6cqw] top-1/2 h-[3cqw] w-[3cqw] -translate-y-1/2 rounded-full" style={{ background: to, boxShadow: `inset 0 0 0 0.45cqw ${ink}55` }} />
-          <span className="absolute inset-y-[3cqw] left-[8.4cqw] border-l border-dashed" style={{ borderColor: `${ink}40` }} />
-          <span className="flex items-center gap-[1.5cqw] font-sans font-bold uppercase" style={{ fontSize: '2.6cqw', letterSpacing: '0.18em', opacity: 0.8 }}>
+          <span className="absolute left-[3.6cqw] top-1/2 h-[3cqw] w-[3cqw] -translate-y-1/2 rounded-full" style={{ background: to, boxShadow: `inset 0 0 0 0.45cqw ${TAG_SOFT}66` }} />
+          <span className="absolute inset-y-[3cqw] left-[8.4cqw] border-l border-dashed" style={{ borderColor: `${TAG_SOFT}55` }} />
+          <span className="flex items-center gap-[1.5cqw] font-mono font-semibold uppercase" style={{ fontSize: '2.5cqw', letterSpacing: '0.18em', color: TAG_SOFT }}>
             <CategoryIcon category={item.category} className="h-[3.6cqw] w-[3.6cqw]" strokeWidth={2} />
             {brandName || item.category}
           </span>
-          <span className="mt-[1.5cqw] line-clamp-2 font-serif font-semibold leading-[1.02] text-ink" style={{ fontSize: headline.length > 13 ? '7.2cqw' : '9cqw', letterSpacing: '-0.02em' }}>
+          <span className="mt-[1.5cqw] line-clamp-2 font-display font-bold leading-[1.0]" style={{ fontSize: headline.length > 13 ? '7.2cqw' : '9cqw', letterSpacing: '-0.03em', color: TAG_INK }}>
             {headline}
           </span>
           {detail && (
-            <span className="mt-[1.6cqw] line-clamp-2 font-sans font-medium leading-snug text-ink-soft" style={{ fontSize: '3.5cqw' }}>
+            <span className="mt-[1.6cqw] line-clamp-2 font-sans font-medium leading-snug" style={{ fontSize: '3.5cqw', color: TAG_SOFT }}>
               {detail}
             </span>
           )}
         </div>
       </div>
-      {size === 'lg' && <span className="absolute bottom-[4%] left-1/2 -translate-x-1/2 rounded-full bg-white/60 px-3 py-1 text-xs font-semibold text-ink-soft backdrop-blur">Photo coming soon</span>}
+      {size === 'lg' && <span className="absolute bottom-[4%] left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-fg-soft backdrop-blur">Photo coming soon</span>}
     </div>
   );
 }

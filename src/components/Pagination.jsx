@@ -7,7 +7,7 @@ export function Pagination({ page, total, pageSize, hrefFor }) {
   return (
     <nav aria-label="Pagination" className="mt-10 flex items-center justify-center gap-3">
       {page > 1 ? <Link className={link} to={hrefFor(page - 1)}>Previous</Link> : <span className={`${link} opacity-40`} aria-hidden="true">Previous</span>}
-      <span className="text-sm text-muted tabular">Page {page} of {pages}</span>
+      <span className="font-mono text-xs uppercase tracking-wider text-muted tabular">Page {page} / {pages}</span>
       {page < pages ? <Link className={link} to={hrefFor(page + 1)}>Next</Link> : <span className={`${link} opacity-40`} aria-hidden="true">Next</span>}
     </nav>
   );
