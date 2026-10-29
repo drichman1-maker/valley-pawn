@@ -20,12 +20,21 @@ export function PhoneIcon({ className = 'h-4 w-4' }) {
   );
 }
 
-/** The shop's mark: a gold pawn on an ink tile. */
+export function ArrowIcon({ className = 'h-4 w-4' }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+/** The shop's mark: a lime pawn on a black tile. */
 export function LogoMark({ className = 'h-10 w-10' }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 64 64" className={className}>
-      <rect width="64" height="64" rx="14" fill="var(--color-ink)" />
-      <path d="M32 12a7 7 0 0 0-4.6 12.3c-2.5 1.4-4.2 3.6-4.2 6.2h17.6c0-2.6-1.7-4.8-4.2-6.2A7 7 0 0 0 32 12Zm-6.5 21-2.3 12h17.6l-2.3-12Zm-5.5 14a3 3 0 0 0-3 3v2h30v-2a3 3 0 0 0-3-3Z" fill="var(--color-gold)" />
+      <rect width="64" height="64" rx="16" fill="var(--color-bg)" />
+      <rect x="0.5" y="0.5" width="63" height="63" rx="15.5" fill="none" stroke="rgb(255 255 255 / 0.14)" />
+      <path d="M32 12a7 7 0 0 0-4.6 12.3c-2.5 1.4-4.2 3.6-4.2 6.2h17.6c0-2.6-1.7-4.8-4.2-6.2A7 7 0 0 0 32 12Zm-6.5 21-2.3 12h17.6l-2.3-12Zm-5.5 14a3 3 0 0 0-3 3v2h30v-2a3 3 0 0 0-3-3Z" fill="var(--color-accent)" />
     </svg>
   );
 }
@@ -35,21 +44,21 @@ export function ModeBanners() {
   return (
     <>
       {backend.mode === 'demo' && (
-        <p className="bg-ink px-4 py-2 text-center text-[0.8rem] text-paper/90">
+        <p className="border-b border-line bg-surface px-4 py-2 text-center font-mono text-[0.72rem] tracking-wide text-muted">
           {IS_SHOWCASE ? (
             <>
-              <strong className="font-semibold text-gold-bright">Preview site.</strong> Sample inventory and store details for demonstration; changes reset on reload.
+              <strong className="font-semibold text-accent">PREVIEW SITE</strong> · Sample inventory and store details for demonstration; changes reset on reload.
             </>
           ) : (
             <>
-              <strong>Demo mode.</strong> Not connected to a database. Sample items only; changes are lost when the page reloads.
+              <strong className="text-fg">DEMO MODE</strong> · Not connected to a database. Sample items only; changes are lost when the page reloads.
             </>
           )}
         </p>
       )}
       {!isShopConfigured() && (
-        <p className="border-b border-gold bg-gold-wash px-4 py-2 text-center text-sm">
-          Store name, phone and address are not set yet. Edit <code>src/config/shop.js</code> before launch.
+        <p className="border-b border-accent/40 bg-accent-wash px-4 py-2 text-center text-sm text-fg">
+          Store name, phone and address are not set yet. Edit <code className="font-mono text-accent">src/config/shop.js</code> before launch.
         </p>
       )}
     </>
@@ -64,17 +73,19 @@ function Header() {
   const tel = telHref();
   const NAV = navItems();
   const linkClass = ({ isActive }) =>
-    `relative rounded-full px-4 py-2 text-[0.95rem] font-medium transition-colors ${isActive ? 'bg-ink text-paper' : 'text-ink hover:bg-paper-deep'}`;
+    `relative rounded-lg px-3.5 py-2 text-[0.92rem] font-medium transition-colors after:absolute after:inset-x-3.5 after:-bottom-px after:h-0.5 after:rounded-full after:bg-accent after:transition-opacity ${
+      isActive ? 'text-fg after:opacity-100' : 'text-fg-soft after:opacity-0 hover:text-fg hover:bg-surface'
+    }`;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line/80 bg-paper/85 backdrop-blur-md supports-[backdrop-filter]:bg-paper/75">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+    <header className="sticky top-0 z-30 border-b border-line bg-bg/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link to="/" className="flex min-w-0 items-center gap-3">
-          <LogoMark className="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
+          <LogoMark className="h-10 w-10 shrink-0" />
           <span className="min-w-0">
-            <span className="block truncate font-serif text-xl font-semibold leading-tight sm:text-2xl">{shopName()}</span>
+            <span className="block truncate font-display text-[1.35rem] font-bold leading-none tracking-tight">{shopName()}</span>
             {(SHOP.tagline || SHOP.cityState) && (
-              <span className="block truncate text-xs font-semibold uppercase tracking-[0.14em] text-muted">{SHOP.tagline ?? SHOP.cityState}</span>
+              <span className="mt-1 hidden truncate font-mono text-[0.62rem] uppercase tracking-[0.22em] text-muted min-[420px]:block">{SHOP.tagline ?? SHOP.cityState}</span>
             )}
           </span>
         </Link>
@@ -85,15 +96,15 @@ function Header() {
             </NavLink>
           ))}
           {tel && (
-            <a href={tel} className="btn btn-gold ml-3 tabular">
+            <a href={tel} className="btn btn-accent ml-3 tabular">
               <PhoneIcon />
-              Call {SHOP.phone}
+              {SHOP.phone}
             </a>
           )}
         </nav>
         <div className="flex items-center gap-2 md:hidden">
           {tel && (
-            <a href={tel} className="btn btn-gold px-3.5 py-2 text-sm">
+            <a href={tel} className="btn btn-accent px-3.5 py-2 text-sm">
               <PhoneIcon />
               Call
             </a>
@@ -104,11 +115,11 @@ function Header() {
         </div>
       </div>
       {open && (
-        <nav id={menuId} aria-label="Main" className="border-t border-line px-4 py-2 md:hidden">
+        <nav id={menuId} aria-label="Main" className="border-t border-line bg-bg px-4 py-2 md:hidden">
           <ul className="flex flex-col">
             {[{ to: '/', label: 'Home' }, ...NAV].map((n) => (
               <li key={n.to}>
-                <NavLink to={n.to} end className={({ isActive }) => `block rounded-xl px-3 py-3 font-medium ${isActive ? 'bg-ink text-paper' : ''}`}>
+                <NavLink to={n.to} end className={({ isActive }) => `block rounded-xl px-3 py-3 font-display text-lg font-semibold ${isActive ? 'bg-surface text-accent' : 'text-fg'}`}>
                   {n.label}
                 </NavLink>
               </li>
@@ -125,12 +136,12 @@ export function LastUpdated({ className = '' }) {
   const { data } = useAsync(() => backend.getInventoryInfo(), [backend]);
   if (!data?.lastPublishedAt) return null;
   return (
-    <p className={`flex items-center gap-2 text-sm text-muted ${className}`}>
+    <p className={`flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-wider text-muted ${className}`}>
       <span className="relative flex h-2 w-2" aria-hidden="true">
-        <span className="absolute inline-flex h-full w-full rounded-full bg-ok opacity-30" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ok opacity-40" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-ok" />
       </span>
-      Inventory last updated {formatDateTime(data.lastPublishedAt)}
+      Updated {formatDateTime(data.lastPublishedAt)}
     </p>
   );
 }
@@ -138,43 +149,53 @@ export function LastUpdated({ className = '' }) {
 function Footer() {
   const tel = telHref();
   return (
-    <footer className="texture-dark mt-20 text-paper">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 text-sm sm:grid-cols-[1.6fr_1fr_1fr]">
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <LogoMark className="h-10 w-10 ring-1 ring-paper/15 rounded-[14px]" />
-            <p className="font-serif text-xl">{shopName()}</p>
+    <footer className="relative mt-24 overflow-hidden border-t border-line bg-bg-2">
+      <div className="mx-auto max-w-7xl px-4 pb-10 pt-14 sm:px-6">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+          <div className="space-y-5">
+            <div className="flex items-center gap-3">
+              <LogoMark className="h-11 w-11" />
+              <div>
+                <p className="font-display text-2xl font-bold leading-none tracking-tight">{shopName()}</p>
+                {SHOP.tagline && <p className="mt-1 font-mono text-[0.62rem] uppercase tracking-[0.22em] text-muted">{SHOP.tagline}</p>}
+              </div>
+            </div>
+            {SHOP.about && <p className="max-w-sm text-fg-soft">{SHOP.about}</p>}
+            <p className="font-mono text-xs text-muted">Prices and availability can change in store.</p>
           </div>
-          {SHOP.about && <p className="max-w-sm text-paper/70">{SHOP.about}</p>}
-          <p className="text-paper/55">Prices and availability can change in store.</p>
+          <div className="space-y-3">
+            <p className="eyebrow">Visit</p>
+            {SHOP.address && <p className="text-fg-soft">{SHOP.address}</p>}
+            {tel && (
+              <p>
+                <a href={tel} className="font-display text-xl font-semibold tabular text-fg hover:text-accent">
+                  {SHOP.phone}
+                </a>
+              </p>
+            )}
+            <dl className="space-y-1 text-sm">
+              {SHOP.hours.map((h) => (
+                <div key={h.days} className="flex justify-between gap-4 border-b border-line py-1.5 last:border-0">
+                  <dt className="text-muted">{h.days}</dt>
+                  <dd className="font-mono text-fg-soft tabular">{h.time}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          <nav aria-label="Footer" className="flex flex-col gap-2.5">
+            <p className="eyebrow">Browse</p>
+            <Link to="/inventory" className="w-fit text-fg-soft hover:text-accent">Inventory</Link>
+            {servicesEnabled() && <Link to="/sell" className="w-fit text-fg-soft hover:text-accent">Sell or pawn</Link>}
+            <Link to="/visit" className="w-fit text-fg-soft hover:text-accent">Hours and location</Link>
+            <Link to="/owner" className="w-fit text-muted hover:text-accent">Owner sign-in</Link>
+          </nav>
         </div>
-        <div className="space-y-2">
-          <p className="eyebrow text-gold-bright">Visit</p>
-          {SHOP.address && <p className="text-paper/85">{SHOP.address}</p>}
-          {tel && (
-            <p>
-              <a href={tel} className="font-semibold tabular text-paper underline decoration-paper/30 underline-offset-4 hover:decoration-paper">
-                {SHOP.phone}
-              </a>
-            </p>
-          )}
-          {SHOP.hours.slice(0, 3).map((h) => (
-            <p key={h.days} className="text-paper/70">
-              {h.days}: <span className="tabular text-paper/90">{h.time}</span>
-            </p>
-          ))}
-        </div>
-        <nav aria-label="Footer" className="flex flex-col gap-2 sm:items-end">
-          <p className="eyebrow text-gold-bright">Browse</p>
-          <Link to="/inventory" className="text-paper/85 underline-offset-4 hover:text-paper hover:underline">Inventory</Link>
-          {servicesEnabled() && <Link to="/sell" className="text-paper/85 underline-offset-4 hover:text-paper hover:underline">Sell or pawn</Link>}
-          <Link to="/visit" className="text-paper/85 underline-offset-4 hover:text-paper hover:underline">Hours and location</Link>
-          <Link to="/owner" className="text-paper/55 underline-offset-4 hover:text-paper hover:underline">Owner sign-in</Link>
-        </nav>
-      </div>
-      <div className="border-t border-paper/10">
-        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-paper/45">
-          © {new Date().getFullYear()} {shopName()}
+        <p className="pointer-events-none mt-14 select-none overflow-hidden whitespace-nowrap font-display text-[clamp(3.5rem,14vw,11rem)] font-extrabold leading-[0.85] tracking-[-0.06em] text-surface-3" aria-hidden="true">
+          {shopName()}
+        </p>
+        <p className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-5 font-mono text-[0.7rem] uppercase tracking-wider text-muted">
+          <span>© {new Date().getFullYear()} {shopName()}</span>
+          <span>Buy · Sell · Pawn</span>
         </p>
       </div>
     </footer>
@@ -185,12 +206,12 @@ export function SiteLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <ScrollToTop />
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:bg-card focus:p-2">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">
         Skip to content
       </a>
       <ModeBanners />
       <Header />
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+      <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         <Outlet />
       </main>
       <Footer />

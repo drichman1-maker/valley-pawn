@@ -4,7 +4,13 @@
 come from the showcase preview (`npm run dev:demo`). `sample-import.csv` is the file used for the
 import-preview and history screenshots.
 
-Re-render after editing (needs Playwright with Chromium):
+Retake the screenshots from a running demo (`npm run dev:demo`), then re-render. Both need
+Playwright; `capture.cjs` drives installed Google Chrome. For `render.cjs`, either install Playwright's
+Chromium (`npx playwright install chromium`) or change its launch call to `chromium.launch({ channel: 'chrome' })`.
+```bash
+cd valley-pawn/presentation && node capture.cjs http://localhost:5173 img sample-import.csv
+```
+Re-render after editing:
 
 ```bash
 cd valley-pawn/presentation && node render.cjs deck.html Valley-Pawn-Proposal.pdf

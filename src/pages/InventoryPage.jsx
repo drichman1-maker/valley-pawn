@@ -14,7 +14,7 @@ import { usePageTitle } from '../lib/usePageTitle.js';
 import { CategoryIcon } from '../components/CategoryArt.jsx';
 
 const input = 'field';
-const labelCls = 'mb-1.5 block text-sm font-semibold';
+const labelCls = 'mb-1.5 block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-muted';
 
 function FilterForm({ filters, categories, onApply }) {
   const [draft, setDraft] = useState({ q: filters.q, min: filters.min ?? '', max: filters.max ?? '' });
@@ -23,7 +23,7 @@ function FilterForm({ filters, categories, onApply }) {
   const apply = (patch) => onApply({ ...filters, q: draft.q, min: bound(draft.min), max: bound(draft.max), ...patch, page: 1 });
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); apply({}); }} className="space-y-4" aria-label="Filter inventory">
+    <form onSubmit={(e) => { e.preventDefault(); apply({}); }} className="space-y-5" aria-label="Filter inventory">
       <div>
         <label htmlFor="f-q" className={labelCls}>Search</label>
         <input id="f-q" type="search" className={input} value={draft.q} onChange={(e) => setDraft({ ...draft, q: e.target.value })} placeholder="Item, brand, model or number" />
@@ -47,15 +47,23 @@ function FilterForm({ filters, categories, onApply }) {
         <legend className={labelCls}>Price</legend>
         <div className="flex items-center gap-2">
           <label htmlFor="f-min" className="sr-only">Minimum price</label>
-          <input id="f-min" inputMode="decimal" className={input} placeholder="Min $" value={draft.min} onChange={(e) => setDraft({ ...draft, min: e.target.value })} pattern="\d+(\.\d{1,2})?" title="A dollar amount, like 50 or 49.99" />
-          <span aria-hidden="true">–</span>
+          <input id="f-min" inputMode="decimal" className={`${input} tabular`} placeholder="Min $" value={draft.min} onChange={(e) => setDraft({ ...draft, min: e.target.value })} pattern="\d+(\.\d{1,2})?" title="A dollar amount, like 50 or 49.99" />
+          <span aria-hidden="true" className="text-muted">–</span>
           <label htmlFor="f-max" className="sr-only">Maximum price</label>
-          <input id="f-max" inputMode="decimal" className={input} placeholder="Max $" value={draft.max} onChange={(e) => setDraft({ ...draft, max: e.target.value })} pattern="\d+(\.\d{1,2})?" title="A dollar amount, like 500" />
+          <input id="f-max" inputMode="decimal" className={`${input} tabular`} placeholder="Max $" value={draft.max} onChange={(e) => setDraft({ ...draft, max: e.target.value })} pattern="\d+(\.\d{1,2})?" title="A dollar amount, like 500" />
         </div>
         <p className="mt-1.5 text-xs text-muted">Leave blank for no limit.</p>
       </fieldset>
       <button type="submit" className="btn btn-ink w-full">Apply filters</button>
     </form>
+  );
+}
+
+function FilterIcon({ className = 'h-4 w-4' }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className}>
+      <path d="M4 6h16M7 12h10M10 18h4" />
+    </svg>
   );
 }
 
@@ -80,16 +88,16 @@ export function InventoryPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
-        <div className="space-y-2">
+      <div className="flex flex-wrap items-end justify-between gap-5 border-b border-line pb-8">
+        <div className="space-y-3">
           <p className="eyebrow">Shop the shelves</p>
-          <h1 className="text-4xl sm:text-5xl">Inventory</h1>
-          <p className="text-ink-soft">{AVAILABILITY_NOTE}</p>
+          <h1 className="text-5xl sm:text-7xl">{filters.category || 'Inventory'}</h1>
+          <p className="text-fg-soft">{AVAILABILITY_NOTE}</p>
           <LastUpdated />
         </div>
         <div className="flex items-center gap-2">
-          <label htmlFor="sort" className="text-sm font-semibold">Sort</label>
-          <select id="sort" value={filters.sort} onChange={(e) => go({ ...filters, sort: e.target.value, page: 1 })} className="field w-auto">
+          <label htmlFor="sort" className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-muted">Sort</label>
+          <select id="sort" value={filters.sort} onChange={(e) => go({ ...filters, sort: e.target.value, page: 1 })} className="field w-auto text-sm">
             {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         </div>
@@ -98,16 +106,16 @@ export function InventoryPage() {
       <div className="grid gap-8 md:grid-cols-[17rem_1fr]">
         <div>
           <details className="surface p-4 md:hidden" open={active || undefined}>
-            <summary className="cursor-pointer font-semibold">Filters{active ? ` (${chips.length} active)` : ''}</summary>
+            <summary className="flex cursor-pointer items-center gap-2 font-semibold"><FilterIcon className="h-4 w-4 text-accent" />Filters{active ? ` (${chips.length} active)` : ''}</summary>
             <div className="mt-4"><FilterForm filters={filters} categories={cats.data ?? []} onApply={go} /></div>
           </details>
           <div className="surface sticky top-24 hidden p-5 md:block">
-            <p className="mb-4 font-serif text-lg font-semibold">Filters</p>
+            <p className="mb-5 flex items-center gap-2 font-display text-lg font-semibold tracking-tight"><FilterIcon className="h-4 w-4 text-accent" />Filters</p>
             <FilterForm filters={filters} categories={cats.data ?? []} onApply={go} />
           </div>
         </div>
 
-        <section aria-labelledby="results-title" className="min-w-0 space-y-4">
+        <section aria-labelledby="results-title" className="min-w-0 space-y-5">
           <h2 id="results-title" className="sr-only">Results</h2>
           {cats.data?.length > 0 && (
             <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none sm:mx-0 sm:flex-wrap sm:px-0" aria-label="Quick category filter">
@@ -119,11 +127,11 @@ export function InventoryPage() {
                       type="button"
                       aria-pressed={on}
                       onClick={() => go({ ...filters, category: c.category, page: 1 })}
-                      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${on ? 'border-ink bg-ink text-paper' : 'border-line-strong bg-card hover:border-ink'}`}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${on ? 'border-accent bg-accent text-accent-ink' : 'border-line-strong bg-surface text-fg-soft hover:border-fg hover:text-fg'}`}
                     >
                       {c.category && <CategoryIcon category={c.category} className="h-4 w-4" strokeWidth={1.8} />}
                       {c.category || 'Everything'}
-                      <span className={`tabular ${on ? 'text-paper/60' : 'text-muted'}`}>{c.count}</span>
+                      <span className={`font-mono text-xs tabular ${on ? 'text-accent-ink/60' : 'text-muted'}`}>{c.count}</span>
                     </button>
                   </li>
                 );
@@ -133,8 +141,8 @@ export function InventoryPage() {
           {chips.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 text-sm">
               {chips.map((c) => (
-                <button key={c.label} type="button" onClick={() => go({ ...filters, ...c.clear, page: 1 })} className="inline-flex items-center gap-1.5 rounded-full border border-gold bg-gold-wash px-3 py-1 font-medium transition hover:border-gold-ink" aria-label={`Remove filter ${c.label}`}>
-                  {c.label} <span aria-hidden="true">×</span>
+                <button key={c.label} type="button" onClick={() => go({ ...filters, ...c.clear, page: 1 })} className="inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent-wash px-3 py-1 font-medium text-fg transition hover:border-accent" aria-label={`Remove filter ${c.label}`}>
+                  {c.label} <span aria-hidden="true" className="text-accent">×</span>
                 </button>
               ))}
               <Link to="/inventory" className="link ml-1">Clear all filters</Link>
@@ -144,14 +152,14 @@ export function InventoryPage() {
           {result.error && <ErrorState title="Inventory could not be loaded." error={result.error} onRetry={result.reload} />}
           {result.data && (
             <>
-              <p className="text-sm font-medium text-muted" aria-live="polite">
+              <p className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted" aria-live="polite">
                 {result.data.total} {result.data.total === 1 ? 'item' : 'items'} available
               </p>
               {result.data.items.length ? (
                 <ProductGrid items={result.data.items} compact />
               ) : (
-                <div className="surface flex flex-col items-center gap-2 px-6 py-14 text-center">
-                  <p className="font-serif text-xl font-semibold">No items match these filters.</p>
+                <div className="surface flex flex-col items-center gap-2 px-6 py-16 text-center">
+                  <p className="font-display text-2xl font-bold tracking-tight">No items match these filters.</p>
                   <p className="text-sm text-muted">Try a broader search, or call us: new items come in every week.</p>
                   {active && <Link to="/inventory" className="link mt-2 inline-block">Clear all filters</Link>}
                 </div>
