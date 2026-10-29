@@ -11,6 +11,8 @@ import { Loading } from './components/States.jsx';
 
 // Owner screens (and the spreadsheet libraries) load only when an owner opens them.
 const AdminRoutes = lazy(() => import('./admin/AdminRoutes.jsx'));
+// The client proposal is its own page (no storefront header/footer) and loads only when opened.
+const ProposalPage = lazy(() => import('./proposal/ProposalPage.jsx'));
 
 export function AppRoutes() {
   return (
@@ -28,6 +30,14 @@ export function AppRoutes() {
         element={
           <Suspense fallback={<Loading />}>
             <AdminRoutes />
+          </Suspense>
+        }
+      />
+      <Route
+        path="proposal"
+        element={
+          <Suspense fallback={<Loading />}>
+            <ProposalPage />
           </Suspense>
         }
       />
