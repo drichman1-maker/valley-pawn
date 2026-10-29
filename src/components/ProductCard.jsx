@@ -14,15 +14,15 @@ export function ProductCard({ item, large = false }) {
       >
         <div className={`relative overflow-hidden ${large ? 'aspect-[5/4]' : 'aspect-[4/3]'}`}>
           <ItemImage photo={item.photos?.[0]} item={item} alt="" className="transition duration-700 ease-out group-hover:scale-[1.05]" />
-          <ItemTag id={item.item_id} className="absolute left-2.5 top-2.5 text-xs sm:left-3 sm:top-3 sm:text-sm" />
+          <ItemTag id={item.item_id} className="absolute left-2.5 top-2.5 text-sm sm:left-3 sm:top-3" />
           {item.condition && (
-            <span className={`absolute right-3 top-3 rounded-md border border-white/10 bg-black/55 px-2 py-1 font-mono text-[0.62rem] uppercase tracking-wider text-fg-soft backdrop-blur hidden lg:inline`}>
+            <span className={`absolute right-3 top-3 rounded-md border border-white/10 bg-black/55 px-2 py-1 font-mono text-[0.75rem] uppercase tracking-wider text-fg-soft backdrop-blur hidden lg:inline`}>
               {item.condition}
             </span>
           )}
         </div>
         <div className={`flex flex-1 flex-col gap-1.5 ${large ? 'p-5' : 'p-3.5 sm:p-4'}`}>
-          <p className="truncate font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted">
+          <p className="truncate font-mono text-[0.75rem] uppercase tracking-[0.18em] text-muted">
             {item.category}
             {item.condition && <span className="lg:hidden"> · {item.condition}</span>}
           </p>

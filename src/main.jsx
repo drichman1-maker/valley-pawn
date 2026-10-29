@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+// Fonts are bundled and served from this site, so first paint never waits on a third party.
+import './fonts.css';
 import './index.css';
 import { AppRoutes } from './App.jsx';
 import { BackendProvider } from './lib/backend/BackendContext.jsx';

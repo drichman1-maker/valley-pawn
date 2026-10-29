@@ -190,7 +190,7 @@ export function ItemArt({ item, label, brandName, size = 'md', className = '' })
           )}
         </div>
       </div>
-      {size === 'lg' && <span className="absolute bottom-[4%] left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-fg-soft backdrop-blur">Photo coming soon</span>}
+      {size === 'lg' && <span className="absolute bottom-[4%] left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-mono text-[0.75rem] uppercase tracking-wider text-fg-soft backdrop-blur">Photo coming soon</span>}
     </div>
   );
 }

@@ -46,8 +46,8 @@
   --color-gold-ink: var(--color-accent);
   --color-gold-wash: var(--color-accent-wash);
 
-  --font-display: 'Bricolage Grotesque', 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   /* Legacy alias: headings used to be serif. */
   --font-serif: var(--font-display);
@@ -78,6 +78,7 @@
     font-family: var(--font-sans);
     color-scheme: dark;
     accent-color: var(--color-accent);
+    -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -172,7 +173,7 @@
   /* Small mono label above headings */
   .eyebrow {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -208,19 +209,17 @@
   align-items: center;
   gap: 0.5em;
   padding: 0.3em 0.7em 0.3em 0.6em;
-  background: rgb(10 11 10 / 0.82);
+  background: rgb(10 11 10 / 0.9);
   border: 1px solid rgb(255 255 255 / 0.14);
   border-radius: 4px 999px 999px 4px;
   color: var(--color-fg);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-weight: 500;
-  font-size: 0.78em;
+  font-size: 0.86em;
   line-height: 1.3;
   letter-spacing: 0.06em;
   white-space: nowrap;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .item-tag::before {
   content: '';
@@ -288,6 +287,18 @@
   }
   .marquee > .marquee-track { animation: none; }
 }
+
+/*
+  Phones and touch screens: 44px minimum tap targets (Apple HIG, WCAG 2.5.5), and 16px form text
+  so iOS Safari does not zoom the page when a field is focused.
+*/
+@media (max-width: 767px), (pointer: coarse) {
+  .btn, .field, .tap { min-height: 44px; }
+  input:not([type='checkbox']):not([type='radio']):not([type='file']), select, textarea { font-size: 16px; }
+}
+
+/* Decorative footer wordmark. Generated content, so it is never read out or contrast-checked. */
+.wordmark::before { content: attr(data-wordmark); }
 
 /* Headings focused programmatically on navigation (for screen readers) are not interactive. */
 [tabindex='-1']:focus { outline: none; }

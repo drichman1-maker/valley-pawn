@@ -50,7 +50,7 @@ function Availability({ item }) {
       <div className="rounded-2xl border border-sold/40 bg-sold-wash p-5">
         <p className="inline-flex items-center gap-2 rounded-full bg-sold px-3 py-1 font-mono text-xs uppercase tracking-wider text-bg">Sold</p>
         <p className="mt-3 text-sm text-fg-soft">This item has been sold and is no longer available.</p>
-        <Link to={`/inventory?${serializeFilters({ ...DEFAULT_FILTERS, category: item.category })}`} className="link mt-3 inline-block text-sm">
+        <Link to={`/inventory?${serializeFilters({ ...DEFAULT_FILTERS, category: item.category })}`} className="link tap mt-1 inline-flex items-center text-sm">
           See available {item.category}
         </Link>
       </div>
@@ -59,7 +59,7 @@ function Availability({ item }) {
   return (
     <div className="surface space-y-4 p-5">
       <p className="text-sm text-fg-soft">
-        <span className="mr-1.5 inline-flex items-center gap-1.5 rounded-full bg-ok-wash px-2.5 py-0.5 font-mono text-[0.68rem] uppercase tracking-wider text-ok">
+        <span className="mr-1.5 inline-flex items-center gap-1.5 rounded-full bg-ok-wash px-2.5 py-0.5 font-mono text-[0.75rem] uppercase tracking-wider text-ok">
           <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden="true" />
           Listed as available
         </span>
@@ -123,12 +123,12 @@ function MobileCallBar({ item, watchId }) {
     <>
       <div className="h-20 md:hidden" aria-hidden="true" />
       <div
-        className={`fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg/90 px-4 py-3 backdrop-blur-xl transition-transform duration-300 md:hidden ${show ? 'translate-y-0' : 'translate-y-full'}`}
+        className={`fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg/90 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl transition-transform duration-300 md:hidden ${show ? 'translate-y-0' : 'translate-y-full'}`}
         aria-hidden={!show}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate font-mono text-[0.65rem] uppercase tracking-wider text-muted">Item {item.item_id}</p>
+            <p className="truncate font-mono text-[0.75rem] uppercase tracking-wider text-muted">Item {item.item_id}</p>
             <p className="font-display text-2xl font-bold tabular tracking-tight">{formatPrice(item.price)}</p>
           </div>
           <a href={tel} tabIndex={show ? 0 : -1} className="btn btn-accent shrink-0">
@@ -173,11 +173,11 @@ export function ItemPage() {
     <article className="space-y-10">
       <div className="flex items-center justify-between gap-3">
         <nav aria-label="Breadcrumb" className="min-w-0 text-sm">
-          <ol className="flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-wider text-muted">
-            <li className="shrink-0"><Link to="/inventory" className="text-fg-soft hover:text-accent"><span aria-hidden="true">← </span>Inventory</Link></li>
+          <ol className="flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-wider text-muted">
+            <li className="shrink-0"><Link to="/inventory" className="tap inline-flex items-center gap-1.5 text-fg-soft hover:text-accent"><span aria-hidden="true">←</span>Inventory</Link></li>
             <li aria-hidden="true" className="text-line-strong">/</li>
             <li className="truncate">
-              <Link to={`/inventory?${serializeFilters({ ...DEFAULT_FILTERS, category: item.category })}`} className="hover:text-accent">{item.category}</Link>
+              <Link to={`/inventory?${serializeFilters({ ...DEFAULT_FILTERS, category: item.category })}`} className="tap inline-flex items-center hover:text-accent">{item.category}</Link>
             </li>
           </ol>
         </nav>
@@ -189,8 +189,8 @@ export function ItemPage() {
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-3">
               <ItemTag id={item.item_id} className="text-base" />
-              <span className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-muted">{item.category}</span>
-              {item.condition && <span className="rounded-md border border-line-strong px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider text-fg-soft">{item.condition}</span>}
+              <span className="font-mono text-[0.75rem] uppercase tracking-[0.18em] text-muted">{item.category}</span>
+              {item.condition && <span className="rounded-md border border-line-strong px-2 py-0.5 font-mono text-[0.75rem] uppercase tracking-wider text-fg-soft">{item.condition}</span>}
             </div>
             <h1 ref={heading} tabIndex={-1} className="text-4xl outline-none sm:text-5xl">{item.title}</h1>
             <p className={`font-display text-5xl font-bold tabular tracking-tight sm:text-6xl ${item.status === 'sold' ? 'text-muted line-through decoration-sold decoration-4' : 'text-accent'}`}>{formatPrice(item.price)}</p>
@@ -200,7 +200,7 @@ export function ItemPage() {
           <dl className="surface divide-y divide-line overflow-hidden text-sm">
             {specs.map(([k, v]) => (
               <div key={k} className="grid grid-cols-[7.5rem_1fr] gap-4 px-5 py-3.5">
-                <dt className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-muted">{k}</dt>
+                <dt className="font-mono text-[0.75rem] uppercase tracking-[0.16em] text-muted">{k}</dt>
                 <dd className="text-fg">{v}</dd>
               </div>
             ))}

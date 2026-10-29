@@ -44,7 +44,7 @@ export function ModeBanners() {
   return (
     <>
       {backend.mode === 'demo' && (
-        <p className="border-b border-line bg-surface px-4 py-2 text-center font-mono text-[0.72rem] tracking-wide text-muted">
+        <p className="border-b border-line bg-surface px-4 py-2 text-center font-mono text-[0.75rem] tracking-wide text-muted">
           {IS_SHOWCASE ? (
             <>
               <strong className="font-semibold text-accent">PREVIEW SITE</strong> · Sample inventory and store details for demonstration; changes reset on reload.
@@ -79,13 +79,13 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link to="/" className="flex min-w-0 items-center gap-3">
-          <LogoMark className="h-10 w-10 shrink-0" />
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 sm:px-6">
+        <Link to="/" className="tap flex min-w-0 items-center gap-2.5 sm:gap-3">
+          <LogoMark className="h-9 w-9 shrink-0 sm:h-10 sm:w-10" />
           <span className="min-w-0">
-            <span className="block truncate font-display text-[1.35rem] font-bold leading-none tracking-tight">{shopName()}</span>
+            <span className="block truncate font-display text-[1.2rem] font-bold leading-none tracking-tight sm:text-[1.35rem]">{shopName()}</span>
             {(SHOP.tagline || SHOP.cityState) && (
-              <span className="mt-1 hidden truncate font-mono text-[0.62rem] uppercase tracking-[0.22em] text-muted min-[420px]:block">{SHOP.tagline ?? SHOP.cityState}</span>
+              <span className="mt-1 hidden truncate font-mono text-[0.75rem] uppercase tracking-[0.22em] text-muted min-[420px]:block">{SHOP.tagline ?? SHOP.cityState}</span>
             )}
           </span>
         </Link>
@@ -102,14 +102,14 @@ function Header() {
             </a>
           )}
         </nav>
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex shrink-0 items-center gap-2 md:hidden">
           {tel && (
-            <a href={tel} className="btn btn-accent px-3.5 py-2 text-sm">
+            <a href={tel} className="btn btn-accent min-w-11 px-3 py-2 text-sm min-[360px]:px-3.5" aria-label={`Call ${SHOP.phone}`}>
               <PhoneIcon />
-              Call
+              <span className="max-[359px]:hidden">Call</span>
             </a>
           )}
-          <button type="button" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((v) => !v)} className="btn btn-outline px-3.5 py-2 text-sm">
+          <button type="button" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((v) => !v)} className="btn btn-outline px-3 py-2 text-sm min-[360px]:px-3.5">
             Menu
           </button>
         </div>
@@ -133,15 +133,15 @@ function Header() {
 
 export function LastUpdated({ className = '' }) {
   const backend = useBackend();
-  const { data } = useAsync(() => backend.getInventoryInfo(), [backend]);
-  if (!data?.lastPublishedAt) return null;
+  const { data, loading } = useAsync(() => backend.getInventoryInfo(), [backend]);
+  if (!loading && !data?.lastPublishedAt) return null;
   return (
-    <p className={`flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-wider text-muted ${className}`}>
+    <p className={`flex items-center gap-2 font-mono text-[0.75rem] uppercase tracking-wider text-muted ${loading ? 'invisible' : ''} ${className}`} aria-hidden={loading || undefined}>
       <span className="relative flex h-2 w-2" aria-hidden="true">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ok opacity-40" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-ok" />
       </span>
-      Updated {formatDateTime(data.lastPublishedAt)}
+      Updated {data?.lastPublishedAt ? formatDateTime(data.lastPublishedAt) : 'loading'}
     </p>
   );
 }
@@ -157,7 +157,7 @@ function Footer() {
               <LogoMark className="h-11 w-11" />
               <div>
                 <p className="font-display text-2xl font-bold leading-none tracking-tight">{shopName()}</p>
-                {SHOP.tagline && <p className="mt-1 font-mono text-[0.62rem] uppercase tracking-[0.22em] text-muted">{SHOP.tagline}</p>}
+                {SHOP.tagline && <p className="mt-1 font-mono text-[0.75rem] uppercase tracking-[0.22em] text-muted">{SHOP.tagline}</p>}
               </div>
             </div>
             {SHOP.about && <p className="max-w-sm text-fg-soft">{SHOP.about}</p>}
@@ -168,7 +168,7 @@ function Footer() {
             {SHOP.address && <p className="text-fg-soft">{SHOP.address}</p>}
             {tel && (
               <p>
-                <a href={tel} className="font-display text-xl font-semibold tabular text-fg hover:text-accent">
+                <a href={tel} className="tap inline-flex items-center font-display text-xl font-semibold tabular text-fg hover:text-accent">
                   {SHOP.phone}
                 </a>
               </p>
@@ -182,18 +182,16 @@ function Footer() {
               ))}
             </dl>
           </div>
-          <nav aria-label="Footer" className="flex flex-col gap-2.5">
-            <p className="eyebrow">Browse</p>
-            <Link to="/inventory" className="w-fit text-fg-soft hover:text-accent">Inventory</Link>
-            {servicesEnabled() && <Link to="/sell" className="w-fit text-fg-soft hover:text-accent">Sell or pawn</Link>}
-            <Link to="/visit" className="w-fit text-fg-soft hover:text-accent">Hours and location</Link>
-            <Link to="/owner" className="w-fit text-muted hover:text-accent">Owner sign-in</Link>
+          <nav aria-label="Footer" className="flex flex-col">
+            <p className="eyebrow mb-1">Browse</p>
+            <Link to="/inventory" className="tap flex w-fit items-center text-fg-soft hover:text-accent">Inventory</Link>
+            {servicesEnabled() && <Link to="/sell" className="tap flex w-fit items-center text-fg-soft hover:text-accent">Sell or pawn</Link>}
+            <Link to="/visit" className="tap flex w-fit items-center text-fg-soft hover:text-accent">Hours and location</Link>
+            <Link to="/owner" className="tap flex w-fit items-center text-muted hover:text-accent">Owner sign-in</Link>
           </nav>
         </div>
-        <p className="pointer-events-none mt-14 select-none overflow-hidden whitespace-nowrap font-display text-[clamp(3.5rem,14vw,11rem)] font-extrabold leading-[0.85] tracking-[-0.06em] text-surface-3" aria-hidden="true">
-          {shopName()}
-        </p>
-        <p className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-5 font-mono text-[0.7rem] uppercase tracking-wider text-muted">
+        <div className="wordmark pointer-events-none mt-14 select-none overflow-hidden whitespace-nowrap font-display text-[clamp(3.5rem,14vw,11rem)] font-extrabold leading-[0.85] tracking-[-0.06em] text-surface-3" data-wordmark={shopName()} aria-hidden="true" />
+        <p className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-5 font-mono text-[0.75rem] uppercase tracking-wider text-muted">
           <span>© {new Date().getFullYear()} {shopName()}</span>
           <span>Buy · Sell · Pawn</span>
         </p>
@@ -211,7 +209,7 @@ export function SiteLayout() {
       </a>
       <ModeBanners />
       <Header />
-      <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+      <main id="main" className="mx-auto min-h-[calc(100svh-4rem)] w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         <Outlet />
       </main>
       <Footer />
