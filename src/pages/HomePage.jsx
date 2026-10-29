@@ -43,9 +43,9 @@ export function SearchForm({ initial = '', idPrefix = 'home', size = 'lg' }) {
         e.preventDefault();
         navigate(`/inventory?${serializeFilters({ ...DEFAULT_FILTERS, q })}`);
       }}
-      className={`flex items-center gap-2 rounded-2xl border border-line-strong bg-bg/80 pl-4 shadow-[var(--shadow-lift)] backdrop-blur transition focus-within:border-accent focus-within:shadow-[var(--shadow-glow)] ${big ? 'p-2' : 'p-1.5'}`}
+      className={`flex items-center gap-2 rounded-2xl border border-line-strong bg-bg/80 pl-3.5 shadow-[var(--shadow-lift)] backdrop-blur transition focus-within:border-accent focus-within:shadow-[var(--shadow-glow)] ${big ? 'p-2' : 'p-1.5'}`}
     >
-      <SearchIcon className="h-5 w-5 shrink-0 text-muted" />
+      <SearchIcon className="hidden h-5 w-5 shrink-0 text-muted min-[360px]:block" />
       <label htmlFor={`${idPrefix}-q`} className="sr-only">Search inventory</label>
       <input
         id={`${idPrefix}-q`}
@@ -55,7 +55,7 @@ export function SearchForm({ initial = '', idPrefix = 'home', size = 'lg' }) {
         placeholder="Search items, brands or item numbers"
         className={`min-w-0 flex-1 bg-transparent text-fg placeholder:text-muted focus:outline-none ${big ? 'py-2.5 text-[1.02rem]' : 'py-1.5'}`}
       />
-      <button type="submit" className={`btn btn-accent ${big ? '' : 'px-4 py-2 text-sm'}`}>Search</button>
+      <button type="submit" className={`btn btn-accent shrink-0 ${big ? 'px-4 sm:px-5' : 'px-4 py-2 text-sm'}`}>Search</button>
     </form>
   );
 }
@@ -96,7 +96,7 @@ function Ticker({ items }) {
   const row = (key) => (
     <ul key={key} aria-hidden={key === 'b'} className="items-center gap-10 pr-10">
       {items.map((t, i) => (
-        <li key={`${t}-${i}`} className="flex items-center gap-10 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.2em] text-muted">
+        <li key={`${t}-${i}`} className="flex items-center gap-10 whitespace-nowrap font-mono text-[0.75rem] uppercase tracking-[0.2em] text-muted">
           {t}
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
         </li>
@@ -152,17 +152,17 @@ export function HomePage() {
               <div className="rise-2 max-w-xl">
                 <SearchForm />
               </div>
-              <div className="rise-3 flex flex-wrap items-center gap-x-8 gap-y-3">
-                {totalAvailable > 0 && (
-                  <Link to="/inventory" className="group flex items-baseline gap-2 hover:text-accent">
-                    <strong className="font-display text-3xl font-bold tabular tracking-tight">{totalAvailable}</strong>
-                    <span className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted group-hover:text-accent">items in stock</span>
+              <div className="rise-3 flex flex-wrap items-center gap-x-8 gap-y-1">
+                {(cats.loading || totalAvailable > 0) && (
+                  <Link to="/inventory" className={`tap group flex items-center gap-2 hover:text-accent ${cats.loading ? 'invisible' : ''}`} aria-hidden={cats.loading || undefined} tabIndex={cats.loading ? -1 : undefined}>
+                    <strong className="font-display text-3xl font-bold tabular tracking-tight">{cats.loading ? '00' : totalAvailable}</strong>
+                    <span className="font-mono text-[0.75rem] uppercase tracking-[0.18em] text-muted group-hover:text-accent">items in stock</span>
                   </Link>
                 )}
-                {cats.data?.length > 0 && (
-                  <span className="flex items-baseline gap-2">
-                    <strong className="font-display text-3xl font-bold tabular tracking-tight">{cats.data.length}</strong>
-                    <span className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted">categories</span>
+                {(cats.loading || cats.data?.length > 0) && (
+                  <span className={`tap flex items-center gap-2 ${cats.loading ? 'invisible' : ''}`} aria-hidden={cats.loading || undefined}>
+                    <strong className="font-display text-3xl font-bold tabular tracking-tight">{cats.loading ? '0' : cats.data.length}</strong>
+                    <span className="font-mono text-[0.75rem] uppercase tracking-[0.18em] text-muted">categories</span>
                   </span>
                 )}
                 <LastUpdated />
@@ -198,7 +198,7 @@ export function HomePage() {
                   </span>
                   <span className="mt-6">
                     <span className="block font-display text-lg font-semibold leading-tight tracking-tight">{c.category}</span>
-                    <span className="mt-1 block font-mono text-[0.68rem] uppercase tracking-wider text-muted tabular">{c.count} {c.count === 1 ? 'item' : 'items'}</span>
+                    <span className="mt-1 block font-mono text-[0.75rem] uppercase tracking-wider text-muted tabular">{c.count} {c.count === 1 ? 'item' : 'items'}</span>
                   </span>
                 </Link>
               </li>
@@ -224,7 +224,7 @@ export function HomePage() {
             <p className="eyebrow">Just in</p>
             <h2 id="latest-title" className="mt-2 text-4xl sm:text-5xl">Newest listings</h2>
           </div>
-          <Link to="/inventory" className="link whitespace-nowrap text-sm sm:text-base">
+          <Link to="/inventory" className="link tap inline-flex items-center whitespace-nowrap text-sm sm:text-base">
             See all <span aria-hidden="true">→</span>
           </Link>
         </div>

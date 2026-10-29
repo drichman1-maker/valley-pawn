@@ -14,7 +14,7 @@ import { usePageTitle } from '../lib/usePageTitle.js';
 import { CategoryIcon } from '../components/CategoryArt.jsx';
 
 const input = 'field';
-const labelCls = 'mb-1.5 block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-muted';
+const labelCls = 'mb-1.5 block font-mono text-[0.75rem] uppercase tracking-[0.16em] text-muted';
 
 function FilterForm({ filters, categories, onApply }) {
   const [draft, setDraft] = useState({ q: filters.q, min: filters.min ?? '', max: filters.max ?? '' });
@@ -96,7 +96,7 @@ export function InventoryPage() {
           <LastUpdated />
         </div>
         <div className="flex items-center gap-2">
-          <label htmlFor="sort" className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-muted">Sort</label>
+          <label htmlFor="sort" className="font-mono text-[0.75rem] uppercase tracking-[0.16em] text-muted">Sort</label>
           <select id="sort" value={filters.sort} onChange={(e) => go({ ...filters, sort: e.target.value, page: 1 })} className="field w-auto text-sm">
             {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
@@ -106,7 +106,7 @@ export function InventoryPage() {
       <div className="grid gap-8 md:grid-cols-[17rem_1fr]">
         <div>
           <details className="surface p-4 md:hidden" open={active || undefined}>
-            <summary className="flex cursor-pointer items-center gap-2 font-semibold"><FilterIcon className="h-4 w-4 text-accent" />Filters{active ? ` (${chips.length} active)` : ''}</summary>
+            <summary className="tap flex cursor-pointer items-center gap-2 font-semibold"><FilterIcon className="h-4 w-4 text-accent" />Filters{active ? ` (${chips.length} active)` : ''}</summary>
             <div className="mt-4"><FilterForm filters={filters} categories={cats.data ?? []} onApply={go} /></div>
           </details>
           <div className="surface sticky top-24 hidden p-5 md:block">
@@ -117,6 +117,7 @@ export function InventoryPage() {
 
         <section aria-labelledby="results-title" className="min-w-0 space-y-5">
           <h2 id="results-title" className="sr-only">Results</h2>
+          {cats.loading && <div className="h-11" aria-hidden="true" />}
           {cats.data?.length > 0 && (
             <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none sm:mx-0 sm:flex-wrap sm:px-0" aria-label="Quick category filter">
               {[{ category: '', count: cats.data.reduce((n, c) => n + c.count, 0) }, ...cats.data].map((c) => {
@@ -127,7 +128,7 @@ export function InventoryPage() {
                       type="button"
                       aria-pressed={on}
                       onClick={() => go({ ...filters, category: c.category, page: 1 })}
-                      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${on ? 'border-accent bg-accent text-accent-ink' : 'border-line-strong bg-surface text-fg-soft hover:border-fg hover:text-fg'}`}
+                      className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition sm:min-h-0 ${on ? 'border-accent bg-accent text-accent-ink' : 'border-line-strong bg-surface text-fg-soft hover:border-fg hover:text-fg'}`}
                     >
                       {c.category && <CategoryIcon category={c.category} className="h-4 w-4" strokeWidth={1.8} />}
                       {c.category || 'Everything'}
@@ -141,18 +142,18 @@ export function InventoryPage() {
           {chips.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 text-sm">
               {chips.map((c) => (
-                <button key={c.label} type="button" onClick={() => go({ ...filters, ...c.clear, page: 1 })} className="inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent-wash px-3 py-1 font-medium text-fg transition hover:border-accent" aria-label={`Remove filter ${c.label}`}>
+                <button key={c.label} type="button" onClick={() => go({ ...filters, ...c.clear, page: 1 })} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-accent/50 bg-accent-wash px-3.5 py-1 font-medium text-fg transition hover:border-accent sm:min-h-0" aria-label={`Remove filter ${c.label}`}>
                   {c.label} <span aria-hidden="true" className="text-accent">×</span>
                 </button>
               ))}
-              <Link to="/inventory" className="link ml-1">Clear all filters</Link>
+              <Link to="/inventory" className="link tap ml-1 inline-flex items-center">Clear all filters</Link>
             </div>
           )}
           {result.loading && <Loading />}
           {result.error && <ErrorState title="Inventory could not be loaded." error={result.error} onRetry={result.reload} />}
           {result.data && (
             <>
-              <p className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted" aria-live="polite">
+              <p className="font-mono text-[0.75rem] uppercase tracking-[0.16em] text-muted" aria-live="polite">
                 {result.data.total} {result.data.total === 1 ? 'item' : 'items'} available
               </p>
               {result.data.items.length ? (

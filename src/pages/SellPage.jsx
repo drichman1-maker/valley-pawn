@@ -58,14 +58,14 @@ export function SellPage() {
           <p className="eyebrow">Option 1</p>
           <h2 className="mt-3 text-4xl">Sell it</h2>
           <p className="mt-4 text-fg-soft">We make you an offer and pay you on the spot. The item becomes ours and the deal is done.</p>
-          <p className="mt-6 inline-block rounded-full bg-accent-wash px-3 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-accent">Best when you no longer need it</p>
+          <p className="mt-6 inline-block rounded-full bg-accent-wash px-3 py-1 font-mono text-[0.75rem] uppercase tracking-wider text-accent">Best when you no longer need it</p>
         </div>
         {pawnLoans && (
           <div className="surface relative overflow-hidden p-7 sm:p-10">
             <p className="eyebrow">Option 2</p>
             <h2 className="mt-3 text-4xl">Pawn it</h2>
             <p className="mt-4 text-fg-soft">Your item secures a short-term loan. Repay the loan and fees by the due date and you pick your item back up. No credit check.</p>
-            <p className="mt-6 inline-block rounded-full bg-accent-wash px-3 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-accent">Best when you want it back</p>
+            <p className="mt-6 inline-block rounded-full bg-accent-wash px-3 py-1 font-mono text-[0.75rem] uppercase tracking-wider text-accent">Best when you want it back</p>
           </div>
         )}
       </section>
