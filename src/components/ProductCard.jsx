@@ -13,7 +13,7 @@ export function ProductCard({ item }) {
         className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[var(--shadow-lift)]"
       >
         <div className="relative aspect-[4/3] overflow-hidden">
-          <ItemImage photo={item.photos?.[0]} category={item.category} alt="" className="transition duration-500 group-hover:scale-[1.04]" />
+          <ItemImage photo={item.photos?.[0]} item={item} alt="" className="transition duration-500 group-hover:scale-[1.04]" />
           <ItemTag id={item.item_id} className="absolute left-2.5 top-2.5 text-[0.7rem] sm:text-xs" />
         </div>
         <div className="flex flex-1 flex-col gap-1 p-3 sm:p-4">

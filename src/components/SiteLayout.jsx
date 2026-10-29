@@ -1,14 +1,16 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { IS_SHOWCASE, SHOP, isShopConfigured, shopName, telHref } from '../config/shop.js';
+import { IS_SHOWCASE, SHOP, isShopConfigured, servicesEnabled, shopName, telHref } from '../config/shop.js';
+import { ScrollToTop } from './ScrollToTop.jsx';
 import { useBackend } from '../lib/backend/BackendContext.jsx';
 import { useAsync } from '../lib/useAsync.js';
 import { formatDateTime } from '../lib/format.js';
 
-const NAV = [
+const navItems = () => [
   { to: '/inventory', label: 'Inventory' },
+  servicesEnabled() && { to: '/sell', label: 'Sell & Pawn' },
   { to: '/visit', label: 'Visit' },
-];
+].filter(Boolean);
 
 export function PhoneIcon({ className = 'h-4 w-4' }) {
   return (
@@ -60,6 +62,7 @@ function Header() {
   const location = useLocation();
   useEffect(() => setOpen(false), [location.pathname, location.search]);
   const tel = telHref();
+  const NAV = navItems();
   const linkClass = ({ isActive }) =>
     `relative rounded-full px-4 py-2 text-[0.95rem] font-medium transition-colors ${isActive ? 'bg-ink text-paper' : 'text-ink hover:bg-paper-deep'}`;
 
@@ -164,6 +167,7 @@ function Footer() {
         <nav aria-label="Footer" className="flex flex-col gap-2 sm:items-end">
           <p className="eyebrow text-gold-bright">Browse</p>
           <Link to="/inventory" className="text-paper/85 underline-offset-4 hover:text-paper hover:underline">Inventory</Link>
+          {servicesEnabled() && <Link to="/sell" className="text-paper/85 underline-offset-4 hover:text-paper hover:underline">Sell or pawn</Link>}
           <Link to="/visit" className="text-paper/85 underline-offset-4 hover:text-paper hover:underline">Hours and location</Link>
           <Link to="/owner" className="text-paper/55 underline-offset-4 hover:text-paper hover:underline">Owner sign-in</Link>
         </nav>
@@ -180,6 +184,7 @@ function Footer() {
 export function SiteLayout() {
   return (
     <div className="flex min-h-screen flex-col">
+      <ScrollToTop />
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:bg-card focus:p-2">
         Skip to content
       </a>

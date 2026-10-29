@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage.jsx';
 import { InventoryPage } from './pages/InventoryPage.jsx';
 import { ItemPage } from './pages/ItemPage.jsx';
 import { VisitPage } from './pages/VisitPage.jsx';
+import { SellPage } from './pages/SellPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
 import { Loading } from './components/States.jsx';
 
@@ -19,6 +20,7 @@ export function AppRoutes() {
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="item/:itemId" element={<ItemPage />} />
         <Route path="visit" element={<VisitPage />} />
+        <Route path="sell" element={<SellPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route

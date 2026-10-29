@@ -1,9 +1,11 @@
 import { SHOP, AVAILABILITY_NOTE, shopName, telHref } from '../config/shop.js';
 import { PhoneIcon } from '../components/SiteLayout.jsx';
+import { usePageTitle } from '../lib/usePageTitle.js';
 
 const card = 'surface space-y-3 p-6';
 
 export function VisitPage() {
+  usePageTitle('Hours and location');
   const tel = telHref();
   return (
     <div className="space-y-8">

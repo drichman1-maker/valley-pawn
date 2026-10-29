@@ -11,6 +11,7 @@ import { NotFoundPage } from './NotFoundPage.jsx';
 import { formatDate, formatPrice } from '../lib/format.js';
 import { AVAILABILITY_NOTE, SHOP, telHref } from '../config/shop.js';
 import { PhoneIcon } from '../components/SiteLayout.jsx';
+import { usePageTitle } from '../lib/usePageTitle.js';
 
 function Gallery({ item }) {
   const [index, setIndex] = useState(0);
@@ -19,7 +20,7 @@ function Gallery({ item }) {
   return (
     <div className="space-y-3 md:sticky md:top-24 md:self-start">
       <div className="aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-line bg-card shadow-[var(--shadow-card)]">
-        <ItemImage key={current?.id} category={item.category} photo={current} alt={photos.length ? `${item.title}, photo ${index + 1} of ${photos.length}` : ''} variant="full" eager />
+        <ItemImage key={current?.id} item={item} photo={current} alt={photos.length ? `${item.title}, photo ${index + 1} of ${photos.length}` : ''} variant="full" eager />
       </div>
       {photos.length > 1 && (
         <ul className="flex gap-2 overflow-x-auto pb-1" aria-label="Photos">
@@ -65,7 +66,7 @@ function Availability({ item }) {
         {AVAILABILITY_NOTE}
       </p>
       {tel ? (
-        <a href={tel} className="btn btn-gold w-full py-3.5 text-base tabular">
+        <a id="item-call" href={tel} className="btn btn-gold w-full py-3.5 text-base tabular">
           <PhoneIcon className="h-5 w-5" />
           Call {SHOP.phone}
         </a>
@@ -79,6 +80,67 @@ function Availability({ item }) {
   );
 }
 
+/** Native share sheet on phones; copies the link elsewhere. */
+function ShareButton({ item }) {
+  const [copied, setCopied] = useState(false);
+  const share = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: item.title, text: `${item.title}, ${formatPrice(item.price)}`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch {
+      // Share sheet dismissed or clipboard blocked: nothing to do.
+    }
+  };
+  return (
+    <button type="button" onClick={share} className="btn btn-outline px-4 py-2 text-sm">
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13" />
+      </svg>
+      <span aria-live="polite">{copied ? 'Link copied' : 'Share'}</span>
+    </button>
+  );
+}
+
+/** Price and Call button pinned to the bottom of the screen on phones. */
+function MobileCallBar({ item, watchId }) {
+  const tel = telHref();
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = document.getElementById(watchId);
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([e]) => setShow(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [watchId]);
+  if (!tel || item.status !== 'available') return null;
+  return (
+    <>
+      <div className="h-20 md:hidden" aria-hidden="true" />
+      <div
+        className={`fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 px-4 py-3 backdrop-blur transition-transform duration-300 md:hidden ${show ? 'translate-y-0' : 'translate-y-full'}`}
+        aria-hidden={!show}
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-xs text-muted">Item {item.item_id}</p>
+            <p className="font-serif text-xl font-semibold tabular">{formatPrice(item.price)}</p>
+          </div>
+          <a href={tel} tabIndex={show ? 0 : -1} className="btn btn-gold shrink-0">
+            <PhoneIcon />
+            Call to hold
+          </a>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export function ItemPage() {
   const { itemId } = useParams();
   const backend = useBackend();
@@ -89,11 +151,9 @@ export function ItemPage() {
     [backend, item?.item_id],
   );
 
+  usePageTitle(item ? `${item.title} (${item.item_id})` : undefined);
   useEffect(() => {
-    if (item) {
-      document.title = `${item.title} (${item.item_id})`;
-      heading.current?.focus();
-    }
+    if (item) heading.current?.focus();
   }, [item]);
 
   if (loading) return <Loading />;
@@ -111,9 +171,18 @@ export function ItemPage() {
 
   return (
     <article className="space-y-8">
-      <nav aria-label="Breadcrumb" className="text-sm">
-        <Link to="/inventory" className="link inline-flex items-center gap-1.5 no-underline hover:underline"><span aria-hidden="true">←</span> Back to inventory</Link>
-      </nav>
+      <div className="flex items-center justify-between gap-3">
+        <nav aria-label="Breadcrumb" className="min-w-0 text-sm">
+          <ol className="flex items-center gap-2 text-muted">
+            <li className="shrink-0"><Link to="/inventory" className="link no-underline hover:underline"><span aria-hidden="true">← </span>Inventory</Link></li>
+            <li aria-hidden="true">/</li>
+            <li className="truncate">
+              <Link to={`/inventory?${serializeFilters({ ...DEFAULT_FILTERS, category: item.category })}`} className="hover:text-ink hover:underline">{item.category}</Link>
+            </li>
+          </ol>
+        </nav>
+        <ShareButton item={item} />
+      </div>
       <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
         <Gallery key={item.item_id} item={item} />
         <div className="space-y-5">
@@ -143,6 +212,7 @@ export function ItemPage() {
           <ProductGrid items={related.data.items} />
         </section>
       )}
+      <MobileCallBar item={item} watchId="item-call" />
     </article>
   );
 }

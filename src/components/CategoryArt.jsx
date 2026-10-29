@@ -123,3 +123,67 @@ export function CategoryArt({ category, label, size = 'md', className = '' }) {
     </div>
   );
 }
+
+const hash = (s = '') => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+/** Brand line and detail line for the tag, from the item's own fields. */
+function tagText(item) {
+  const brand = item.brand?.trim();
+  if (brand) {
+    const rest = item.title.replace(new RegExp(`^${brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'i'), '');
+    return [brand, item.model?.trim() || rest];
+  }
+  // No brand: lead with the first few words (up to a comma), the rest goes on the detail line.
+  const words = item.title.split(/\s+/);
+  let n = 0;
+  while (n < words.length && n < 3 && (n === 0 || `${words.slice(0, n + 1).join(' ')}`.length <= 16)) {
+    n += 1;
+    if (/[,(]$/.test(words[n - 1])) break;
+  }
+  return [words.slice(0, n).join(' ').replace(/[,(]$/, ''), words.slice(n).join(' ')];
+}
+
+/**
+ * Artwork for an item with no photo yet: a hanging shelf tag lettered with the item's brand and
+ * model on the category's tint. Unique per item, so a grid never repeats one picture.
+ */
+export function ItemArt({ item, label, brandName, size = 'md', className = '' }) {
+  const [from, to, ink] = THEMES[artKey(item.category)];
+  const [headline, detail] = tagText(item);
+  const tilt = ((hash(item.item_id) % 9) - 4) * 0.9;
+  return (
+    <div
+      className={`relative flex h-full w-full items-center justify-center overflow-hidden [container-type:inline-size] ${className}`}
+      style={{ background: `radial-gradient(120% 90% at 30% 10%, ${from}, ${to})`, color: ink }}
+      role="img"
+      aria-label={label}
+    >
+      <CategoryIcon category={item.category} className="pointer-events-none absolute -bottom-[8%] -right-[6%] h-[62%] w-auto opacity-[0.08]" strokeWidth={1} />
+      <svg aria-hidden="true" className="absolute left-0 top-0 h-full w-full" viewBox="0 0 100 75" preserveAspectRatio="none">
+        <path d="M 36 -2 C 31 12, 23 26, 19.4 37.5" fill="none" stroke={ink} strokeOpacity="0.4" vectorEffect="non-scaling-stroke" style={{ strokeWidth: 1.25 }} />
+      </svg>
+      <div className="relative w-[70%]" style={{ transform: `rotate(${tilt}deg)`, transformOrigin: '6% 50%', filter: 'drop-shadow(0 6px 10px rgb(23 32 28 / 0.16)) drop-shadow(0 1px 1px rgb(23 32 28 / 0.12))' }}>
+        <div
+          className="relative flex flex-col justify-center bg-[#fffdf7] py-[6cqw] pl-[11cqw] pr-[5cqw]"
+          style={{ clipPath: 'polygon(9cqw 0, 100% 0, 100% 100%, 9cqw 100%, 0 50%)', borderRadius: '0 1.6cqw 1.6cqw 0' }}
+        >
+          <span className="absolute left-[3.6cqw] top-1/2 h-[3cqw] w-[3cqw] -translate-y-1/2 rounded-full" style={{ background: to, boxShadow: `inset 0 0 0 0.45cqw ${ink}55` }} />
+          <span className="absolute inset-y-[3cqw] left-[8.4cqw] border-l border-dashed" style={{ borderColor: `${ink}40` }} />
+          <span className="flex items-center gap-[1.5cqw] font-sans font-bold uppercase" style={{ fontSize: '2.6cqw', letterSpacing: '0.18em', opacity: 0.8 }}>
+            <CategoryIcon category={item.category} className="h-[3.6cqw] w-[3.6cqw]" strokeWidth={2} />
+            {brandName || item.category}
+          </span>
+          <span className="mt-[1.5cqw] line-clamp-2 font-serif font-semibold leading-[1.02] text-ink" style={{ fontSize: headline.length > 13 ? '7.2cqw' : '9cqw', letterSpacing: '-0.02em' }}>
+            {headline}
+          </span>
+          {detail && (
+            <span className="mt-[1.6cqw] line-clamp-2 font-sans font-medium leading-snug text-ink-soft" style={{ fontSize: '3.5cqw' }}>
+              {detail}
+            </span>
+          )}
+        </div>
+      </div>
+      {size === 'lg' && <span className="absolute bottom-[4%] left-1/2 -translate-x-1/2 rounded-full bg-white/60 px-3 py-1 text-xs font-semibold text-ink-soft backdrop-blur">Photo coming soon</span>}
+    </div>
+  );
+}

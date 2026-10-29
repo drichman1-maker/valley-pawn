@@ -16,6 +16,13 @@ const OWNER_SHOP = {
     // { text: 'Licensed pawnbroker (Illinois license #12345)', approved: false },
     // { text: 'Phone holds available for 24 hours', approved: false },
   ],
+  // "Sell & Pawn" page. Hidden unless approved: true. List only what the shop really buys/lends on.
+  services: {
+    approved: false,
+    buys: [], // e.g. ['Gold and silver jewelry', 'Power tools', 'Game consoles']
+    pawnLoans: false, // true only if the shop offers pawn loans
+    loanNote: null, // e.g. 'Loan terms and fees follow Illinois law. Ask us for details.'
+  },
 };
 
 // SHOWCASE profile for the client preview build only (`npm run build:demo` with
@@ -39,6 +46,12 @@ const SHOWCASE_SHOP = {
     { text: 'Call ahead and we will set an item aside for you', approved: true },
     { text: 'Fair offers to buy, sell or pawn', approved: true },
   ],
+  services: {
+    approved: true,
+    buys: ['Gold and silver jewelry', 'Power tools', 'Electronics and laptops', 'Game consoles', 'Musical instruments', 'Watches', 'Cameras and lenses', 'Sporting goods'],
+    pawnLoans: true,
+    loanNote: 'Loan terms and fees are set by state law. Ask us for the details on any offer.',
+  },
 };
 
 const env = import.meta.env ?? {};
@@ -51,4 +64,6 @@ export const AVAILABILITY_NOTE = 'Please call to confirm availability before vis
 export const shopName = () => SHOP.name ?? 'Shop name not set';
 export const approvedClaims = () => SHOP.claims.filter((c) => c.approved && c.text);
 export const telHref = () => (SHOP.phone ? `tel:${SHOP.phone.replace(/[^\d+]/g, '')}` : null);
+export const servicesEnabled = () => Boolean(SHOP.services?.approved && (SHOP.services.buys?.length || SHOP.services.pawnLoans));
+export const pageTitle = (title) => [title, SHOP.name].filter(Boolean).join(' · ') || 'Inventory';
 export const isShopConfigured = () => Boolean(SHOP.name && SHOP.phone && SHOP.address);

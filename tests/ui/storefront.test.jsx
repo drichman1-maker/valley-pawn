@@ -77,6 +77,27 @@ describe('storefront', () => {
     expect(await screen.findByRole('heading', { level: 1, name: /circular saw/ })).toBeInTheDocument();
   });
 
+  it('hides the Sell & Pawn page and nav link until the owner enables it in shop config', async () => {
+    renderApp('/sell');
+    expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Sell & Pawn' })).not.toBeInTheDocument();
+  });
+
+  it('names the browser tab after the item being viewed', async () => {
+    renderApp('/item/00491');
+    await screen.findByRole('heading', { level: 1, name: /socket set/ });
+    await waitFor(() => expect(document.title).toBe('Example: socket set (leading-zero ID) (00491)'));
+  });
+
+  it('filters by category from the quick category buttons', async () => {
+    const user = userEvent.setup();
+    renderApp('/inventory');
+    await screen.findByText('7 items available');
+    await user.click(await screen.findByRole('button', { name: /^Jewelry/ }));
+    expect(location()).toBe('/inventory?category=Jewelry');
+    expect(await screen.findByText('2 items available')).toBeInTheDocument();
+  });
+
   it('keeps owner pages behind sign-in', async () => {
     renderApp('/owner/import');
     expect(await screen.findByRole('heading', { name: 'Owner sign-in' })).toBeInTheDocument();

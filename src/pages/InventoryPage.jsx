@@ -10,6 +10,8 @@ import { Pagination } from '../components/Pagination.jsx';
 import { LastUpdated } from '../components/SiteLayout.jsx';
 import { formatPrice } from '../lib/format.js';
 import { AVAILABILITY_NOTE } from '../config/shop.js';
+import { usePageTitle } from '../lib/usePageTitle.js';
+import { CategoryIcon } from '../components/CategoryArt.jsx';
 
 const input = 'field';
 const labelCls = 'mb-1.5 block text-sm font-semibold';
@@ -66,6 +68,7 @@ export function InventoryPage() {
   const cats = useAsync(() => backend.getPublicCategories(), [backend]);
   const go = (f) => setParams(serializeFilters(f));
   const active = hasActiveFilters(filters);
+  usePageTitle(filters.category || 'Inventory');
 
   const chips = [
     filters.q && { label: `“${filters.q}”`, clear: { q: '' } },
@@ -106,6 +109,27 @@ export function InventoryPage() {
 
         <section aria-labelledby="results-title" className="min-w-0 space-y-4">
           <h2 id="results-title" className="sr-only">Results</h2>
+          {cats.data?.length > 0 && (
+            <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none sm:mx-0 sm:flex-wrap sm:px-0" aria-label="Quick category filter">
+              {[{ category: '', count: cats.data.reduce((n, c) => n + c.count, 0) }, ...cats.data].map((c) => {
+                const on = filters.category === c.category;
+                return (
+                  <li key={c.category || 'all'} className="shrink-0">
+                    <button
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => go({ ...filters, category: c.category, page: 1 })}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${on ? 'border-ink bg-ink text-paper' : 'border-line-strong bg-card hover:border-ink'}`}
+                    >
+                      {c.category && <CategoryIcon category={c.category} className="h-4 w-4" strokeWidth={1.8} />}
+                      {c.category || 'Everything'}
+                      <span className={`tabular ${on ? 'text-paper/60' : 'text-muted'}`}>{c.count}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           {chips.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 text-sm">
               {chips.map((c) => (
