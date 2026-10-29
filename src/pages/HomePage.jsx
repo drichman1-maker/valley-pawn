@@ -67,7 +67,7 @@ export function HomePage() {
     <div className="space-y-16 sm:space-y-20">
       <section aria-labelledby="home-title" className="texture-dark relative overflow-hidden rounded-[2rem] px-5 py-10 text-paper sm:px-10 sm:py-14 lg:px-14">
         <div className="grid items-center gap-10 lg:grid-cols-[1.25fr_1fr]">
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
             <p className="eyebrow text-gold-bright">{SHOP.tagline ?? 'In stock now'}</p>
             <h1 id="home-title" className="text-4xl text-paper sm:text-5xl lg:text-[3.6rem]">
               Browse what we have for sale<span className="text-gold-bright">.</span>
